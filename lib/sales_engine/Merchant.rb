@@ -27,17 +27,7 @@ module SalesEngine
 
     end
 
-    def random
-      
-    end
 
-    def find_by_x(match)
-      
-    end
-
-    def find_all_by_x(match)
-      
-    end
 
   end
 
