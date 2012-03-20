@@ -1,11 +1,11 @@
 class String
   def constantize
-    self.split("::").inject(Module) do |mod, str|
+    split("::").reject(&:empty?).inject(Module) do |mod, str|
       mod.const_get(str)
     end
   end
 
   def deconstantize
-    #self.
+    split("::").reject(&:empty?)[0..-2].join("::")
   end
 end

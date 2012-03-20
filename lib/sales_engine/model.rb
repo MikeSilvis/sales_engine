@@ -4,9 +4,13 @@ module SalesEngine
       base.extend(ModelClassMethods)
     end
 
+    def id
+      # TODO
+    end
+
     module ModelClassMethods
       def has_many(attr)
-        [name, attr.to_s].join("::").constantize
+        [name, attr.to_s.deconstantize].join("::").constantize
       end
     end
   end
