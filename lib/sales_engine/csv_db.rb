@@ -23,8 +23,8 @@ module SalesEngine
         if file =~ /([a-z0-9_]+)\.csv$/i
           table_name = $1
         else
-          #raise "Invalid filename: #{file}\n" +
-          #      "Expected *.csv."
+          raise "Invalid filename: #{file}\n" +
+                "Expected *.csv."
         end
 
         @tables[table_name] = CSV.read(file,CSV_OPTIONS)
