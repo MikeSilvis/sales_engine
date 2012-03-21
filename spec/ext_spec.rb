@@ -1,9 +1,6 @@
 require 'sales_engine/ext'
 
 describe String do
-  it "#constantize" do
-    "Module::Object".constantize.should == Object
-  end
 
   expected_constant = %w{
     ::Foo::Bar      Foo
@@ -15,5 +12,17 @@ describe String do
     it "#deconstantize #{constant} #{expected}" do
       constant.deconstantize.should == expected
     end
+  end
+
+  it "#constantize" do
+    "Module::Object".constantize.should == Object
+  end
+
+  it "#tableize" do
+    "InvoiceItem".tableize.should == "invoice_items"
+  end
+
+  it "#depluralize" do
+    "Leases".depluralize.should == "Lease"
   end
 end
