@@ -29,5 +29,4 @@ describe CSVDatabase do
       CSVDatabase.new("foo", "bar", "baz")
     }.should raise_exception
   end
-
 end

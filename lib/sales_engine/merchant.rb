@@ -1,6 +1,10 @@
+require 'sales_engine/model'
+
 module SalesEngine
 
   class Merchant
+    include Model
+
     ## Has_many :invoices, :items
     attr_accessor :id, :name, :created_at, :updated_at
     def self.most_revenue
