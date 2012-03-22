@@ -12,4 +12,20 @@ class String
   def tableize
     scan(/[A-Z][a-z]+/).map(&:downcase).join("_").pluralize
   end
+  
+  def depluralize
+    if self =~ /sses$/
+      gsub(/sses$/, 'ss')
+    else
+      gsub(/s$/, '')
+    end
+  end
+
+  def pluralize
+    if self =~ /ess$/
+      self + "es"
+    else
+      self + "s"
+    end
+  end  
 end

@@ -6,7 +6,7 @@ describe Customer do
     Customer.all
   end
   let(:customer) do 
-    Customer.find_by_first_name("Casper")
+    Customer.find_by_first_name("Mike")
   end
   context "Call random method" do
     it "should hit method missing" do
@@ -37,7 +37,7 @@ describe Customer do
         Customer.find_all_by_garbage("Mike").should be_nil
       end
       it "#find_all_by_first_name" do
-        Customer.find_all_by_first_name("Casper").should_not be_nil
+        Customer.find_all_by_first_name("Mike").should_not be_nil
       end
       it "#find_all_by_faulty_name" do 
         Customer.find_by_first_name("Garbage").should be_nil

@@ -1,4 +1,6 @@
 require 'sales_engine/model'
+require 'sales_engine/item'
+require 'sales_engine/invoice'
 
 module SalesEngine
 
@@ -11,7 +13,7 @@ module SalesEngine
 
     end
 
-    def selfmost_items
+    def self.most_items
 
     end
 
@@ -31,7 +33,13 @@ module SalesEngine
 
     end
 
+    def items
+        Item.find("merchant_id", id)
+    end
 
+    def invoices
+        Invoice.find("merchant_id",id)
+    end
 
   end
 
