@@ -2,6 +2,7 @@ $:.unshift("./")
 require 'sales_engine/ext'
 require 'sales_engine/csv_db'
 require 'bigdecimal'
+require 'object_store'
 
 module SalesEngine
   module Model
@@ -25,9 +26,19 @@ module SalesEngine
       end
     end
 
+    def to_i
+      id
+    end
+
     def set_attribute(attr, value)
       type = self.class.get_type_of(attr)
       casted_value = self.class.type_cast(value, type)
+
+      if attr.end_with?("_id") && self.class == value.class
+        association = attr.gsub(/_id$/, '')
+        instance_variable_set("@#{association}", value)
+      end
+
       instance_variable_set("@#{attr}", casted_value)
     end
 
@@ -47,6 +58,17 @@ module SalesEngine
         define_method(name+"=") do |value|
           set_attribute(name, value)
         end
+      end
+
+      def create(attributes)
+        now = DateTime.now
+        default_attrs = {created_at: now, updated_at: now}
+        attributes = default_attrs.merge(attributes)
+        object_store << new(attributes)
+      end
+
+      def object_store
+        @object_store ||= ObjectStore.new
       end
 
       def get_type_of(attr)
@@ -83,30 +105,32 @@ module SalesEngine
       end
 
       def all
-        @all ||= []
+        object_store.items
       end
 
       def load
         table = Model.database.table(table_name)
-        @all  = table.map { |row| new(row) }
+        items = table.map { |row| new(row) }
+        object_store.merge(items)
       end
 
       def random
-        all.sort_by{ rand }.first
+        index = rand * (all.size - 1)
+        all[index]
       end
 
       def find(attr,criteria)
-        all.select { |k| k.send(attr) == criteria }
+        (@find_cache ||= {})[attr][criteria]
       end
 
-      def method_missing(name,*args)
+      def method_missing(name, *args)
         name = name.to_s
         if name.start_with?("find_by")
           attr = name.gsub(/^find_by_/,"").to_sym
-          find(attr,args[0]).first if instance_methods.include? attr
+          object_store.find(attr, args[0]).first
         elsif name.start_with?("find_all_by")
           attr = name.gsub(/^find_all_by_/,"").to_sym
-          find(attr,args[0]) if instance_methods.include? attr
+          object_store.find(attr, args[0])
         else
           super(name.to_sym, *args)
         end

@@ -47,6 +47,11 @@ module SalesEngine
       items.map(&:quantity).sum
     end
 
+    def charge(attributes)
+      attributes[:invoice] = self
+      Transaction.create(attributes)
+    end
+
   end
 
 end

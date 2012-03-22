@@ -24,8 +24,8 @@ module SalesEngine
     end
 
     def favorite_merchant
-      invoices.group_by { |k| k.merchant }.
-        max_by{ |m,is| is.map(&:transactions).flatten.size }[0]
+      invoices.group_by { |i| i.merchant }.
+               max_by{ |m,is| is.map(&:transactions).flatten.size }[0]
     end
 
     def days_since_activity
