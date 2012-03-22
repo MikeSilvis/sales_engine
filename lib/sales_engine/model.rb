@@ -2,7 +2,7 @@ $:.unshift("./")
 require 'sales_engine/ext'
 require 'sales_engine/csv_db'
 require 'bigdecimal'
-require 'object_store'
+require 'sales_engine/object_store'
 
 module SalesEngine
   module Model
@@ -34,7 +34,7 @@ module SalesEngine
       type = self.class.get_type_of(attr)
       casted_value = self.class.type_cast(value, type)
 
-      if attr.end_with?("_id") && self.class == value.class
+      if attr.to_s.end_with?("_id") && self.class == value.class
         association = attr.gsub(/_id$/, '')
         instance_variable_set("@#{association}", value)
       end

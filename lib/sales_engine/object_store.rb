@@ -49,7 +49,7 @@ module SalesEngine
     end
 
     def add_item_to_cached_sets(item)
-      cached_attribute.each do |attribute|
+      cached_attributes.each do |attribute|
         value = item.send(attribute)
         cache = cache_for(attribute)
         (cache[value] ||= Set.new) << value
