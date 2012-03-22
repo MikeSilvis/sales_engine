@@ -5,9 +5,13 @@ require 'sales_engine/merchant'
 
 module SalesEngine
   class Customer
-    include SalesEngine::Model    
-    attr_accessor :id, :first_name, :last_name, :created_at, :updated_at
-    #has_many :invoices
+    include SalesEngine::Model
+
+    field :id,          :integer
+    field :first_name,  :string
+    field :last_name,   :string
+    field :created_at,  :datetime
+    field :updated_at,  :datetime
 
     def invoices
       SalesEngine::Invoice.find("customer_id", id)

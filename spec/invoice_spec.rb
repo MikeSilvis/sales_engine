@@ -1,12 +1,12 @@
 require 'sales_engine/invoice'
 require 'sales_engine/model'
 
-describe Merchant do 
-  let(:invoices) do 
+describe Merchant do
+  let(:invoices) do
     Invoice.all
   end
-  let(:invoice) do 
-    Invoice.find_by_id("1")
+  let(:invoice) do
+    Invoice.find_by_id(1)
   end
   context "has_many assocations" do
     it "returns a collection of transactions" do
@@ -19,8 +19,8 @@ describe Merchant do
       invoice.invoice_items.collect(&:item).should_not be_empty
     end
   end
-  context "belongs_to assocation" do 
-    it "returns a single customer" do 
+  context "belongs_to assocation" do
+    it "returns a single customer" do
       invoice.customer.last_name.should == "Lemke"
     end
   end

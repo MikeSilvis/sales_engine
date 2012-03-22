@@ -7,8 +7,11 @@ module SalesEngine
   class Merchant
     include Model
 
-    ## Has_many :invoices, :items
-    attr_accessor :id, :name, :created_at, :updated_at
+    field :id,          :integer
+    field :name,        :string
+    field :created_at,  :datetime
+    field :updated_at,  :datetime
+
     def self.most_revenue
 
     end

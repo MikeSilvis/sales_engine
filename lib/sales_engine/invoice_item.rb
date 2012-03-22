@@ -2,11 +2,16 @@ require 'sales_engine/model'
 
 module SalesEngine
   class InvoiceItem
-    include SalesEngine::Model  
-    attr_accessor :id, :item_id, :invoice_id, :quantity, :unit_price, 
-                  :created_at, :updated_at
-    #belongs_to :invoice, :item
-    
+    include SalesEngine::Model
+
+    field :id,          :integer
+    field :item_id,     :integer
+    field :invoice_id,  :integer
+    field :quantity,    :integer
+    field :unit_price,  :decimal
+    field :created_at,  :datetime
+    field :updated_at,  :datetime
+
     def invoice
       Invoice.find("id", invoice_id).first
     end

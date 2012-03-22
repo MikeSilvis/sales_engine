@@ -1,14 +1,18 @@
 require 'sales_engine/model'
 module SalesEngine
   class Transaction
-    include SalesEngine::Model   
-     #belongs_to :invoice
-     attr_accessor :id, :invoice_id, :credit_card_number,
-                   :credit_card_experiation_date, :result, :created_at,
-                   :updated_at
-      def invoice
+    include SalesEngine::Model
 
-      end
+    field :id,                           :integer
+    field :invoice_id,                   :integer
+    field :credit_card_number,           :string
+    field :credit_card_experiation_date, :datetime
+    field :result,                       :string
+    field :created_at,                   :datetime
+    field :updated_at,                   :datetime
+
+    def invoice
+      Invoice.find(:id, invoice_id).first
+    end
   end
-
 end

@@ -3,8 +3,13 @@ module SalesEngine
 
   class Invoice
     include Model
-    attr_accessor :id, :customer_id, :merchant_id, :status, :created_at
-    #belong_to :item, merchant
+
+    field :id,            :integer
+    field :customer_id,   :integer
+    field :merchant_id,   :integer
+    field :status,        :string
+    field :created_at,    :datetime
+    field :updated_at,    :datetime
 
     def transactions
       Transaction.find("invoice_id", id)
@@ -15,7 +20,7 @@ module SalesEngine
     end
 
     def merchant
-      Merchant.find("id", merchant_id).first  
+      Merchant.find("id", merchant_id).first
     end
 
     def items
@@ -25,7 +30,7 @@ module SalesEngine
     def customer
       Customer.find("id", customer_id).first
     end
-    
+
   end
 
 end
