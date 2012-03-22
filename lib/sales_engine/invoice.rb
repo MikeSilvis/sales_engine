@@ -24,7 +24,7 @@ module SalesEngine
     end
 
     def items
-      invoice_items.map {|i| i.item}
+      invoice_items.map(&:item)
     end
 
     def customer

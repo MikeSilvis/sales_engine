@@ -30,10 +30,9 @@ module SalesEngine
     end
 
     def paid_invoices(date=nil)
-      date = date.to_date if date
-
       if date
-        invoices.select(&:paid?).select {|i| i.date == date}
+        date = date.to_date
+        invoices.select(&:paid?).select {|i| i.created_at.to_date == date}
       else
         invoices.select(&:paid?)
       end
