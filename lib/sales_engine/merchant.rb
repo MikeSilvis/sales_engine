@@ -21,6 +21,7 @@ module SalesEngine
     end
 
     def revenue(date=nil)
+      date = date.to_date if date
       paid_invoices(date).sum(&:total_cost)
     end
 
@@ -29,6 +30,8 @@ module SalesEngine
     end
 
     def paid_invoices(date=nil)
+      date = date.to_date if date
+
       if date
         invoices.select(&:paid?).select {|i| i.date == date}
       else

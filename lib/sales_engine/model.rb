@@ -22,16 +22,18 @@ module SalesEngine
     def initialize(attributes)
       if attributes
         attributes.each do |attr, value|
-          set_attribute(attr, value)
+          set_attribute(attr, value, false)
         end
       end
+
+      save
     end
 
     def to_i
       id
     end
 
-    def set_attribute(attr, value)
+    def set_attribute(attr, value, save_object=true)
       type = self.class.get_type_of(attr)
       casted_value = self.class.type_cast(value, type)
 
@@ -41,6 +43,12 @@ module SalesEngine
       end
 
       instance_variable_set("@#{attr}", casted_value)
+
+      save if save_object
+    end
+
+    def save
+      self.class.object_store.update(self)
     end
 
     def get_attribute(attr)

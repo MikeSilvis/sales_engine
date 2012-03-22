@@ -1,3 +1,5 @@
+require 'date'
+
 class String
   def constantize
     split("::").reject(&:empty?).inject(Module) do |mod, str|
@@ -37,5 +39,11 @@ module Enumerable
     else
       inject(&:+)
     end
+  end
+end
+
+class DateTime
+ def to_date
+    ::Date.new(year, month, day)
   end
 end

@@ -48,10 +48,8 @@ module SalesEngine
     end
 
     def charge(attributes)
-      attributes[:invoice] = self
+      attributes[:invoice_id] = self
       Transaction.create(attributes)
     end
-
   end
-
 end

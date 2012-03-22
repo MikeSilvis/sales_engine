@@ -27,7 +27,7 @@ module SalesEngine
     end
 
     def find_cached(attribute, value)
-      set = cache_for(attribute)[value]
+      set = cache_for(attribute.to_sym)[value]
       set.to_a
     end
 
@@ -45,9 +45,10 @@ module SalesEngine
 
     def remove_item_from_cached_sets(item)
       @sets_containing_item[item].each do |set|
-        @sets_containing_item.delete(item)
         set.delete(item)
       end
+
+      @sets_containing_item.delete(item)
     end
 
     def add_item_to_cached_sets(item)
@@ -61,7 +62,7 @@ module SalesEngine
     end
 
     def generate_cache_for_attribute(attribute)
-      cache = items.group_by(&attribute.to_sym)
+      cache = items.group_by(&attribute)
       cache.keys.each do |key|
         set = cache[key] = Set.new(cache[key])
         set.each do |item|
