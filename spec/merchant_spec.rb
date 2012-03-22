@@ -25,12 +25,18 @@ describe Merchant do
     it ".most_items(x)" do
       Merchant.most_items(2).should_not be_nil
     end
-    # it ".revenue(date)"
+    it ".revenue(date)" do
+      date = DateTime.parse("2012-02-14 20:56:56 UTC")
+      Merchant.revenue(date)
+    end
 
     it "#revenue" do
       merchant.revenue.should_not be_nil
     end
-    # it "#revenue(date)"
+    it "#revenue(date)" do 
+      date = DateTime.parse("2012-02-14 20:56:56 UTC")
+      merchant.revenue(date)
+    end
     it "#favorite_customer" do
       merchant.favorite_customer.should_not be_nil
     end

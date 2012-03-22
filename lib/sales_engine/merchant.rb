@@ -31,7 +31,6 @@ module SalesEngine
 
     def paid_invoices(date=nil)
       if date
-        date = date.to_date
         invoices.select(&:paid?).select {|i| i.created_at.to_date == date}
       else
         invoices.select(&:paid?)
@@ -55,6 +54,7 @@ module SalesEngine
     end
 
     def self.revenue(date)
+      date = date.to_date if date
       all.map {|m| m.revenue(date)}.sum
     end
 
