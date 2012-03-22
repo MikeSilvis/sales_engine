@@ -40,11 +40,11 @@ module SalesEngine
     end
 
     def total_cost
-      items.map(&:total_cost).sum
+      invoice_items.sum(&:total_cost)
     end
 
     def item_count
-      items.map(&:quantity).sum
+      invoice_items.map(&:quantity).sum
     end
 
   end

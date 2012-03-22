@@ -1,7 +1,7 @@
 require 'sales_engine/invoice_item'
 require 'sales_engine/model'
 
-describe Merchant do
+describe InvoiceItem do
   let(:invoice_items) do
     InvoiceItem.all
   end
