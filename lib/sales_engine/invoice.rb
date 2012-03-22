@@ -23,7 +23,7 @@ module SalesEngine
     end
 
     def customer
-      Customer.find("invoice_id", id).first
+      Customer.find("id", customer_id).first
     end
     
   end

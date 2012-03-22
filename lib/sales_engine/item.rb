@@ -18,6 +18,14 @@ module SalesEngine
       
     end
 
+    def invoice_item
+      InvoiceItem.find("item_id", id)
+    end
+
+    def merchant
+      Merchant.find("id", merchant_id)
+    end
+
   end
 
 end

@@ -25,7 +25,7 @@ describe Customer do
         Customer.find_by_garbage("Mike").should be_nil
       end
       it "#find_by_first_name" do
-        Customer.find_by_first_name("Casper").should_not be_nil
+        Customer.find_by_first_name("Mike").should_not be_nil
       end
       it "#find_by_faulty_name" do 
         Customer.find_by_first_name("Garbage").should be_nil
@@ -58,7 +58,7 @@ describe Customer do
     end
     context '#favorite_merchant' do 
       it "returns a single favorite merchant" do 
-        customer.favorite_merchant.name.should == "Botsford Inc"
+        customer.favorite_merchant.name.should == "Fritsch-Blanda"
       end
     end
   end

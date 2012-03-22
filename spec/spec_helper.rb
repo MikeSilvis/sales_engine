@@ -2,20 +2,9 @@ require 'simplecov'
 require 'sales_engine/model'
 require 'sales_engine/customer'
 require 'sales_engine/merchant'
+require 'sales_engine/invoice_item'
+require 'sales_engine'
+require 'bundler'
+Bundler.require
 
-files = [
-         "./data/customers.csv", 
-         "./data/invoices.csv", 
-         "./data/transactions.csv", 
-         "./data/merchants.csv",
-         "./data/items.csv",
-         "./data/invoice_items.csv"
-        ]
-include SalesEngine
-Model.database = CSVDatabase.new(*files)
-Customer.load
-Invoice.load
-Transaction.load
-Merchant.load
-Item.load
-InvoiceItems.load
+SalesEngine.startup
