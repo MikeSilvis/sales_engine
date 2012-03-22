@@ -31,6 +31,22 @@ module SalesEngine
       Customer.find("id", customer_id).first
     end
 
+    def pending?
+      !paid?
+    end
+
+    def paid?
+      transactions.any?(&:successfully_procesed?)
+    end
+
+    def total_cost
+      items.map(&:total_cost).sum
+    end
+
+    def item_count
+      items.map(&:quantity).sum
+    end
+
   end
 
 end

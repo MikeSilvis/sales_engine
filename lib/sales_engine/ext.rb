@@ -12,7 +12,7 @@ class String
   def tableize
     scan(/[A-Z][a-z]+/).map(&:downcase).join("_").pluralize
   end
-  
+
   def depluralize
     if self =~ /sses$/
       gsub(/sses$/, 'ss')
@@ -27,5 +27,15 @@ class String
     else
       self + "s"
     end
-  end  
+  end
+end
+
+module Enumerable
+  def sum(&block)
+    if block
+      inject(0) {|sum, n| sum + block.call(n)}
+    else
+      inject(&:+)
+    end
+  end
 end

@@ -14,5 +14,9 @@ module SalesEngine
     def invoice
       Invoice.find(:id, invoice_id).first
     end
+
+    def successfully_procesed?
+      result.downcase == "success"
+    end
   end
 end

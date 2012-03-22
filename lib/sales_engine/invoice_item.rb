@@ -20,6 +20,14 @@ module SalesEngine
       Item.find("id", item_id).first
     end
 
+    def total_cost
+      unit_price * quantity
+    end
+
+    def self.paid
+      all.select {|item| item.invoice.paid?}
+    end
+
   end
 
 
