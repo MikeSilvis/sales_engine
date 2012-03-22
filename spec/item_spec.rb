@@ -1,7 +1,7 @@
 require 'sales_engine/item'
 require 'sales_engine/model'
 
-describe Merchant do
+describe Item do
   let(:items) do
     Item.all
   end
@@ -17,4 +17,18 @@ describe Merchant do
       item.merchant.should_not be_nil
     end
   end
+
+  context "Business intelligence (According to Jeff...)" do
+    it ".most_revenue(x)" do
+      Item.most_revenue(2).should_not be_nil
+    end
+    it ".most_items(x)" do
+      Item.most_items(2).should_not be_nil
+    end
+    it "#best_day" do
+      item.best_day
+    end
+
+  end
+
 end

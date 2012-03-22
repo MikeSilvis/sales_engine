@@ -45,24 +45,6 @@ describe Customer do
     end
   end
 
-  context "has_many associations" do
-    context "#invoice" do
-      it "returns an array of invoices" do
-        Customer.all.any? {|c| !c.invoices.empty?}.should be_true
-      end
-    end
-    context '#transactions' do
-      it "returns an array of transactions" do
-        Customer.all.any? {|c| !c.transactions.empty?}.should be_true
-      end
-    end
-    context '#favorite_merchant' do
-      it "returns a single favorite merchant" do
-        customer.favorite_merchant.name.should == "Fritsch-Blanda"
-      end
-    end
-  end
-
   context "field types" do
     it "should have integer id" do
       customer.id.should be_kind_of Integer
@@ -85,5 +67,15 @@ describe Customer do
     end
   end
 
-
+  context "Business Intelligence (Acording to Jeff...)" do
+    it "#transactions" do
+      customer.transactions
+    end
+    it "#invoices" do
+      customer.invoices
+    end
+    it "#favorite_merchant" do
+      customer.favorite_merchant.name.should == "Fritsch-Blanda"
+    end
+  end
 end

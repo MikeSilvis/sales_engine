@@ -18,7 +18,7 @@ describe CSVDatabase do
     CSVDatabase.new(*files)
   end
 
-  it "should have all the tables" do 
+  it "should have all the tables" do
     tables.each do |table|
       database.table(table).should_not be_nil
     end
