@@ -1,8 +1,9 @@
 $:.unshift("./")
+require 'bigdecimal'
+
+require 'sales_engine/object_store'
 require 'sales_engine/ext'
 require 'sales_engine/csv_db'
-require 'bigdecimal'
-require 'sales_engine/object_store'
 
 module SalesEngine
   module Model
@@ -120,17 +121,17 @@ module SalesEngine
       end
 
       def find(attr,criteria)
-        (@find_cache ||= {})[attr][criteria]
+        object_store.find_cached(attr, criteria)
       end
 
       def method_missing(name, *args)
         name = name.to_s
         if name.start_with?("find_by")
           attr = name.gsub(/^find_by_/,"").to_sym
-          object_store.find(attr, args[0]).first
+          find(attr, args[0]).first
         elsif name.start_with?("find_all_by")
           attr = name.gsub(/^find_all_by_/,"").to_sym
-          object_store.find(attr, args[0])
+          find(attr, args[0])
         else
           super(name.to_sym, *args)
         end

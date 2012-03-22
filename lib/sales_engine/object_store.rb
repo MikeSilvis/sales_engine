@@ -23,11 +23,12 @@ module SalesEngine
     end
 
     def items
-      @items
+      @items.to_a
     end
 
     def find_cached(attribute, value)
-      cache_for(attribute)[value]
+      set = cache_for(attribute)[value]
+      set.to_a
     end
 
     def find_uncached(attribute, value)
@@ -44,6 +45,7 @@ module SalesEngine
 
     def remove_item_from_cached_sets(item)
       @sets_containing_item[item].each do |set|
+        @sets_containing_item.delete(item)
         set.delete(item)
       end
     end
@@ -52,7 +54,9 @@ module SalesEngine
       cached_attributes.each do |attribute|
         value = item.send(attribute)
         cache = cache_for(attribute)
-        (cache[value] ||= Set.new) << value
+        set = (cache[value] ||= Set.new)
+        set << value
+        @sets_containing_item[item] << set
       end
     end
 
@@ -64,6 +68,8 @@ module SalesEngine
           @sets_containing_item[item] << set
         end
       end
+
+      cache
     end
 
     def cached_attributes

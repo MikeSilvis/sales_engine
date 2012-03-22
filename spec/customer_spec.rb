@@ -22,8 +22,11 @@ describe Customer do
   context "#find_by" do
     context "#find_by" do
       it "#find_by_fautly_values" do
-        Customer.find_by_garbage("Mike").should be_nil
+        expect do
+          Customer.find_by_garbage("Mike")
+        end.should raise_error
       end
+
       it "#find_by_first_name" do
         Customer.find_by_first_name("Mike").should_not be_nil
       end
@@ -34,7 +37,9 @@ describe Customer do
 
     context "#find_all_by" do
       it "#find_all_by_fautly_values" do
-        Customer.find_all_by_garbage("Mike").should be_nil
+        expect do
+          Customer.find_all_by_garbage("Mike")
+        end.should raise_error
       end
       it "#find_all_by_first_name" do
         Customer.find_all_by_first_name("Mike").should_not be_nil
