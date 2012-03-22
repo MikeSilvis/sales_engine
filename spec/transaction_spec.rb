@@ -18,7 +18,7 @@ describe Transaction do
     #end
   #end
 
-  context "belongs_to an invoice" do 
+  context "belongs_to an invoice" do
     it "returns an invoice" do
       transaction.invoice.should_not be_nil
     end

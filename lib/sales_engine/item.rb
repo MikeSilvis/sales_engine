@@ -22,8 +22,8 @@ module SalesEngine
 
     def best_day
       InvoiceItem.paid.
-        select { |invoice_item| invoice_item.item == self }
-        group_by { |invoice_item| invoice_item.invoice.created_at }
+        select { |invoice_item| invoice_item.item == self }.
+        group_by { |invoice_item| invoice_item.invoice.created_at }.
         sort_by { |date, invoice_items| -invoice_items.sum(&:total_cost) }.
         first
     end

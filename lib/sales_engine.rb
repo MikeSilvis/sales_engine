@@ -2,9 +2,9 @@ module SalesEngine
 
   def self.startup
     files = [
-             "./data/customers.csv", 
-             "./data/invoices.csv", 
-             "./data/transactions.csv", 
+             "./data/customers.csv",
+             "./data/invoices.csv",
+             "./data/transactions.csv",
              "./data/merchants.csv",
              "./data/items.csv",
              "./data/invoice_items.csv"
@@ -15,7 +15,7 @@ module SalesEngine
     Transaction.load
     Merchant.load
     Item.load
-    InvoiceItem.load    
+    InvoiceItem.load
   end
 
 end

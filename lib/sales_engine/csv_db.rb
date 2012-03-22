@@ -14,7 +14,7 @@ module SalesEngine
     end
 
     private
-  
+
     def load_table_names(*files)
       @tables = Hash.new
 

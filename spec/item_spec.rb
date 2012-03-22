@@ -24,7 +24,7 @@ describe Item do
     end
     it ".most_items(x)" do
       Item.most_items(2).should_not be_nil
-    end 
+    end
     it "#best_day" do
       item.best_day
     end

@@ -71,13 +71,11 @@ describe Customer do
     it "#transactions" do
       customer.transactions
     end
-    it "#invoices" do 
+    it "#invoices" do
       customer.invoices
     end
     it "#favorite_merchant" do
       customer.favorite_merchant.name.should == "Fritsch-Blanda"
     end
   end
-
-
 end
