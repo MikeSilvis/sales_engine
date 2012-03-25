@@ -4,32 +4,12 @@ module SalesEngine
   class Invoice
     include Model
 
-    field :id,            :integer
-    field :customer_id,   :integer
-    field :merchant_id,   :integer
-    field :status,        :string
-    field :created_at,    :datetime
-    field :updated_at,    :datetime
-
-    def transactions
-      Transaction.find("invoice_id", id)
-    end
-
-    def invoice_items
-      InvoiceItem.find("invoice_id", id)
-    end
-
-    def merchant
-      Merchant.find("id", merchant_id).first
-    end
-
-    def items
-      invoice_items.map(&:item)
-    end
-
-    def customer
-      Customer.find("id", customer_id).first
-    end
+    has_many :transactions
+    has_many :invoice_items
+    has_many :items, :through => :invoice_items
+    belongs_to :customer
+    belongs_to :merchant
+    field :status, :string
 
     def pending?
       !paid?

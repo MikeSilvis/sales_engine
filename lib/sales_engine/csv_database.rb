@@ -5,8 +5,8 @@ module SalesEngine
 
     CSV_OPTIONS = {:headers => true, :header_converters => :symbol}
 
-    def initialize(*files)
-      load_table_names(*files)
+    def initialize(files)
+      load_tables(files)
     end
 
     def table(name)
@@ -15,11 +15,10 @@ module SalesEngine
 
     private
 
-    def load_table_names(*files)
+    def load_tables(files)
       @tables = Hash.new
 
       files.each do |file|
-
         if file =~ /([a-z0-9_]+)\.csv$/i
           table_name = $1
         else
@@ -27,7 +26,7 @@ module SalesEngine
                 "Expected *.csv."
         end
 
-        @tables[table_name] = CSV.read(file,CSV_OPTIONS)
+        @tables[table_name] = CSV.read(file, CSV_OPTIONS)
       end
     end
   end

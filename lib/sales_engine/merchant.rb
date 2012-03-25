@@ -7,18 +7,9 @@ module SalesEngine
   class Merchant
     include Model
 
-    field :id,          :integer
-    field :name,        :string
-    field :created_at,  :datetime
-    field :updated_at,  :datetime
-
-    def items
-      Item.find("merchant_id", id)
-    end
-
-    def invoices
-      Invoice.find("merchant_id",id)
-    end
+    has_many :items
+    has_many :invoices
+    field :name, :string
 
     def revenue(date=nil)
       date = date.to_date if date

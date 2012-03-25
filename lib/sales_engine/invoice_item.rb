@@ -4,21 +4,10 @@ module SalesEngine
   class InvoiceItem
     include SalesEngine::Model
 
-    field :id,          :integer
-    field :item_id,     :integer
-    field :invoice_id,  :integer
+    belongs_to :item
+    belongs_to :invoice
     field :quantity,    :integer
     field :unit_price,  :decimal
-    field :created_at,  :datetime
-    field :updated_at,  :datetime
-
-    def invoice
-      Invoice.find("id", invoice_id).first
-    end
-
-    def item
-      Item.find("id", item_id).first
-    end
 
     def total_cost
       unit_price * quantity

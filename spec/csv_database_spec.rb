@@ -1,4 +1,4 @@
-require 'sales_engine/csv_db'
+require 'sales_engine/csv_database'
 include SalesEngine
 
 describe CSVDatabase do
@@ -15,7 +15,7 @@ describe CSVDatabase do
   end
 
   let(:database) do
-    CSVDatabase.new(*files)
+    CSVDatabase.new(files)
   end
 
   it "should have all the tables" do
@@ -25,8 +25,8 @@ describe CSVDatabase do
   end
 
   it "should not accept non-csv files" do
-    lambda {
+    expect do
       CSVDatabase.new("foo", "bar", "baz")
-    }.should raise_exception
+    end.should raise_exception
   end
 end

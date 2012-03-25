@@ -4,13 +4,10 @@ module SalesEngine
   class Item
     include SalesEngine::Model
 
-    field :id,           :integer
     field :name,         :string
     field :description,  :string
     field :unit_price,   :decimal
     field :merchant_id,  :integer
-    field :created_at,   :datetime
-    field :updated_at,   :datetime
 
     def invoice_item
       InvoiceItem.find("item_id", id)

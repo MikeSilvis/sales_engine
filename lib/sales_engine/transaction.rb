@@ -3,17 +3,10 @@ module SalesEngine
   class Transaction
     include SalesEngine::Model
 
-    field :id,                           :integer
-    field :invoice_id,                   :integer
+    belongs_to :invoice
     field :credit_card_number,           :string
     field :credit_card_experiation_date, :datetime
     field :result,                       :string
-    field :created_at,                   :datetime
-    field :updated_at,                   :datetime
-
-    def invoice
-      Invoice.find(:id, invoice_id).first
-    end
 
     def successfully_procesed?
       result.downcase == "success"

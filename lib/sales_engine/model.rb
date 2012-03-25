@@ -3,12 +3,15 @@ require 'bigdecimal'
 
 require 'sales_engine/object_store'
 require 'sales_engine/ext'
-require 'sales_engine/csv_db'
+require 'sales_engine/csv_database'
 
 module SalesEngine
   module Model
     def self.included(base)
       base.extend(ModelClassMethods)
+      base.field(:id,         :integer)
+      base.field(:created_at, :datetime)
+      base.field(:updated_at, :datetime)
     end
 
     def self.database=(db)
@@ -56,6 +59,14 @@ module SalesEngine
     end
 
     module ModelClassMethods
+
+      def create(attributes)
+        now = DateTime.now
+        default_attrs = {created_at: now, updated_at: now}
+        attributes = default_attrs.merge(attributes)
+        object_store << new(attributes)
+      end
+
       def field(name, type)
         name = name.to_s
         set_type_of(name, type)
@@ -69,11 +80,58 @@ module SalesEngine
         end
       end
 
-      def create(attributes)
-        now = DateTime.now
-        default_attrs = {created_at: now, updated_at: now}
-        attributes = default_attrs.merge(attributes)
-        object_store << new(attributes)
+      def has_many(association, options={})
+        if options[:through]
+          class_eval(<<-CODE, __FILE__, __LINE__ + 1)
+            def #{association}
+              all_items = []
+              #{options.fetch(:through)}.each do |through_item|
+                all_items.concat(through_item.#{association})
+              end
+
+              all_items
+            end
+          CODE
+        else
+          association    = association.to_s
+          model_constant = [name.deconstantize, association.depluralize.camelize].join("::")
+          belongs_to_id  = "#{table_name.depluralize}_id"
+
+          class_eval(<<-CODE, __FILE__, __LINE__ + 1)
+            def #{association}
+              #{model_constant}.find_all_by_#{belongs_to_id}(id)
+            end
+          CODE
+        end
+      end
+
+      def has_one(association)
+        association    = association.to_s
+        model_constant = [name.deconstantize, association.camelize].join("::")
+        belongs_to_id  = "#{table_name.depluralize}_id"
+
+        class_eval(<<-CODE, __FILE__, __LINE__ + 1)
+          def #{association}
+            #{model_constant}.find_by_#{belongs_to_id}(id)
+          end
+        CODE
+      end
+
+      def belongs_to(association)
+        association    = association.to_s
+        model_constant = [name.deconstantize, association.camelize].join("::")
+        belongs_to_id  = "#{association}_id"
+
+        field(belongs_to_id, :integer)
+        class_eval(<<-CODE, __FILE__, __LINE__ + 1)
+          def #{association}
+            #{model_constant}.find_by_id(#{belongs_to_id})
+          end
+        CODE
+      end
+
+      def delete_all
+        @boject_store.clear
       end
 
       def object_store
@@ -105,22 +163,15 @@ module SalesEngine
         end
       end
 
-      def has_many(attr)
-        [name, attr.to_s.deconstantize].join("::").constantize
-      end
-
-      def table_name
-        name.split("::").last.tableize
-      end
-
       def all
         object_store.items
       end
 
       def load
         table = Model.database.table(table_name)
-        items = table.map { |row| new(row) }
-        object_store.merge(items)
+        table.each do |row|
+          create(row)
+        end
       end
 
       def random
@@ -128,23 +179,39 @@ module SalesEngine
         all[index]
       end
 
-      def find(attr,criteria)
+      def find(attr, criteria)
         object_store.find_cached(attr, criteria)
+      end
+
+      def table_name
+        name.split("::").last.tableize
       end
 
       def method_missing(name, *args)
         name = name.to_s
-        if name.start_with?("find_by")
-          attr = name.gsub(/^find_by_/,"").to_sym
-          find(attr, args[0]).first
-        elsif name.start_with?("find_all_by")
-          attr = name.gsub(/^find_all_by_/,"").to_sym
-          find(attr, args[0])
+        if name.start_with?("find_by_")
+          attribute   = name.gsub(/^find_by_/,"")
+          finder_name = "find_all_by_#{attribute}"
+
+          define_singleton_method(finder_name) do |target_value|
+            find(attribute, target_value).first
+          end
+
+          send(finder_name, args[0])
+
+        elsif name.start_with?("find_all_by_")
+          attribute   = name.gsub(/^find_all_by_/,"")
+          finder_name = "find_all_by_#{attribute}"
+
+          define_singleton_method(finder_name) do |target_value|
+            find(attribute, target_value)
+          end
+
+          send(finder_name, args[0])
         else
           super(name.to_sym, *args)
         end
       end
-
     end
   end
 end

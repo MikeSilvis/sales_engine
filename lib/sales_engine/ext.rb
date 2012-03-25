@@ -1,4 +1,4 @@
-require 'date'
+require 'sales_engine/lazy_value'
 
 class String
   def constantize
@@ -12,22 +12,37 @@ class String
   end
 
   def tableize
-    scan(/[A-Z][a-z]+/).map(&:downcase).join("_").pluralize
+    word = self
+    word = word.gsub(/([A-Z\d]+)([A-Z][a-z])/,'\1_\2')
+    word = word.gsub(/([a-z\d])([A-Z])/,'\1_\2')
+    word.downcase.pluralize
+  end
+
+  def pluralize
+    if end_with?("ss")
+      self + "es"
+    else
+      self + "s"
+    end
   end
 
   def depluralize
-    if self =~ /sses$/
-      gsub(/sses$/, 'ss')
+    if end_with?("sses")
+      gsub(/es$/, '')
     else
       gsub(/s$/, '')
     end
   end
 
-  def pluralize
-    if self =~ /ess$/
-      self + "es"
-    else
-      self + "s"
+  def camelize
+    gsub(/[a-z\d]*/, &:capitalize).gsub('_', '')
+  end
+end
+
+class Object
+  def lazy(&block)
+    LazyValue.new do
+      block.call
     end
   end
 end
@@ -43,7 +58,7 @@ module Enumerable
 end
 
 class DateTime
- def to_date
-    ::Date.new(year, month, day)
+  def to_date
+    Date.new(year, month, day)
   end
 end

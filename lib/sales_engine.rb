@@ -9,7 +9,8 @@ module SalesEngine
              "./data/items.csv",
              "./data/invoice_items.csv"
             ]
-    Model.database = CSVDatabase.new(*files)
+
+    Model.database = CSVDatabase.new(files)
     Customer.load
     Invoice.load
     Transaction.load

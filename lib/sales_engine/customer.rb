@@ -7,21 +7,10 @@ module SalesEngine
   class Customer
     include SalesEngine::Model
 
-    field :id,          :integer
-    field :first_name,  :string
-    field :last_name,   :string
-    field :created_at,  :datetime
-    field :updated_at,  :datetime
-
-    def invoices
-      SalesEngine::Invoice.find("customer_id", id)
-    end
-
-    def transactions
-      invoices.map do |i|
-        i.transactions
-      end.flatten
-    end
+    has_many :invoices
+    has_many :transactions, :through => :invoices
+    field :first_name, :string
+    field :last_name,  :string
 
     def favorite_merchant
       invoices.group_by { |i| i.merchant }.
@@ -29,22 +18,19 @@ module SalesEngine
     end
 
     def days_since_activity
-
+      raise "Not implemented"
     end
 
     def pending_invoices
-
+      raise "Not implemented"
     end
 
     def self.most_items
-
+      raise "Not implemented"
     end
 
     def self.most_revenue
-
+      raise "Not implemented"
     end
-
   end
-
-
 end

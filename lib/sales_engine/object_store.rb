@@ -37,6 +37,12 @@ module SalesEngine
       end
     end
 
+    def clear
+      @items = Set.new
+      @caches_by_attribute = Hash.new
+      @sets_containing_item = Hash.new([])
+    end
+
     private
 
     def cache_for(attribute)
