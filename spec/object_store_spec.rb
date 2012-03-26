@@ -8,10 +8,18 @@ describe ObjectStore do
     end
   end
 
-  let(:store) { store = ObjectStore.new; store.merge(items); store }
+  let(:store) { ObjectStore.new.tap { |store| store.merge(items) } }
 
-  it "finds correctly" do
+  it "items are accessable" do
+    store.items.should == items
+  end
+
+  it "finds via index correctly" do
     store.find_indexed("even", true).should == items.select(&:even)
+  end
+
+  it "finds without index correctly" do
+    store.find_unindexed("even", true).should == items.select(&:even)
   end
 
   context "index invalidation" do
@@ -32,6 +40,7 @@ describe ObjectStore do
       store << item10
 
       store.find_indexed("even", true).should == items.select(&:even) + [item10]
+      store.find_indexed("even", false).should == items.reject(&:even)
     end
   end
 end
