@@ -2,7 +2,7 @@ source :rubygems
 
 group :development do
   gem 'fabrication'
-  gem "faker"
+  gem 'faker'
   gem 'rake'
   gem 'rspec'
   gem 'simplecov'
