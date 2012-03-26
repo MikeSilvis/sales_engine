@@ -10,7 +10,7 @@ describe Merchant do
   end
 
   context "has_many assocations" do
-    it "returns a collection of items" do
+    it "returns aq collection of items" do
       merchant.items.should_not be_nil
     end
     it "returns a collection of invoices" do
