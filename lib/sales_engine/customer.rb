@@ -8,13 +8,18 @@ module SalesEngine
     include SalesEngine::Model
 
     has_many :invoices
-    has_many :transactions, :through => :invoices
     field :first_name, :string
     field :last_name,  :string
 
+    def transactions
+      invoices.map do |i|
+        i.transactions
+      end.flatten
+    end
+
     def favorite_merchant
       invoices.group_by { |i| i.merchant }.
-               max_by{ |m,is| is.map(&:transactions).flatten.size }[0]
+               max_by{ |m,is| is.sum { |i| i.transactions.count }}[0]
     end
 
     def days_since_activity

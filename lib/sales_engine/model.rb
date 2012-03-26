@@ -1,5 +1,6 @@
 $:.unshift("./")
 require 'bigdecimal'
+require 'date'
 
 require 'sales_engine/object_store'
 require 'sales_engine/ext'
@@ -22,18 +23,29 @@ module SalesEngine
       @db
     end
 
-    def initialize(attributes)
+    def initialize(attributes=nil)
       if attributes
         attributes.each do |attr, value|
           set_attribute(attr, value, false)
         end
       end
-
-      save
     end
 
     def to_i
       id
+    end
+
+    def ==(comparison_object)
+      super ||
+        comparison_object.instance_of?(self.class) &&
+        !id.nil? &&
+        comparison_object.id == id
+    end
+
+    alias :eql? :==
+
+    def hash
+      id.hash
     end
 
     def set_attribute(attr, value, save_object=true)
@@ -51,6 +63,18 @@ module SalesEngine
     end
 
     def save
+      now = DateTime.now
+
+      if id.nil?
+        set_attribute(:id, self.class.next_id, false)
+      end
+
+      if created_at.nil?
+        set_attribute(:created_at, now, false)
+      end
+
+      set_attribute(:updated_at, now, false)
+
       self.class.object_store.update(self)
     end
 
@@ -60,11 +84,19 @@ module SalesEngine
 
     module ModelClassMethods
 
-      def create(attributes)
-        now = DateTime.now
-        default_attrs = {created_at: now, updated_at: now}
-        attributes = default_attrs.merge(attributes)
-        object_store << new(attributes)
+      def next_id
+        if all.size > 0
+          all.max_by {|record| record.id}.id + 1
+        else
+          0
+        end
+      end
+
+      def create(attributes=nil)
+        record = new(attributes)
+        record.save
+
+        record
       end
 
       def field(name, type)
@@ -84,12 +116,7 @@ module SalesEngine
         if options[:through]
           class_eval(<<-CODE, __FILE__, __LINE__ + 1)
             def #{association}
-              all_items = []
-              #{options.fetch(:through)}.each do |through_item|
-                all_items.concat(through_item.#{association})
-              end
-
-              all_items
+              #{options.fetch(:through)}.map(&:#{association})
             end
           CODE
         else
@@ -131,7 +158,7 @@ module SalesEngine
       end
 
       def delete_all
-        @boject_store.clear
+        object_store.clear
       end
 
       def object_store
@@ -155,7 +182,7 @@ module SalesEngine
         when :integer
           obj.to_i
         when :datetime
-          DateTime.parse(obj)
+          DateTime.parse(obj.to_s)
         when :decimal
           BigDecimal(obj)
         else
@@ -180,7 +207,7 @@ module SalesEngine
       end
 
       def find(attr, criteria)
-        object_store.find_cached(attr, criteria)
+        object_store.find_indexed(attr, criteria)
       end
 
       def table_name

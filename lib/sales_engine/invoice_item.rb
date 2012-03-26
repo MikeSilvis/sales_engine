@@ -16,8 +16,5 @@ module SalesEngine
     def self.paid
       all.select {|item| item.invoice.paid?}
     end
-
   end
-
-
 end

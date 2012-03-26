@@ -4,6 +4,8 @@ module SalesEngine
   class Item
     include SalesEngine::Model
 
+    has_many :invoice_items
+    has_many :invoices, :through => :invoice_items
     field :name,         :string
     field :description,  :string
     field :unit_price,   :decimal

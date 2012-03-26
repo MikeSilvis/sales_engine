@@ -4,13 +4,13 @@ module SalesEngine
   class ObjectStore
     def initialize
       @items = Set.new
-      @caches_by_attribute = Hash.new
+      @index_by_attribute = Hash.new
       @sets_containing_item = Hash.new([])
     end
 
     def update(item)
       @items << item
-      remove_item_from_cached_sets(item)
+      remove_item_from_index_sets(item)
       add_item_to_cached_sets(item)
     end
 
@@ -26,12 +26,12 @@ module SalesEngine
       @items.to_a
     end
 
-    def find_cached(attribute, value)
-      set = cache_for(attribute.to_sym)[value]
+    def find_indexed(attribute, value)
+      set = index_for(attribute.to_sym)[value]
       set.to_a
     end
 
-    def find_uncached(attribute, value)
+    def find_unindexed(attribute, value)
       @items.select do |item|
         item.send(attribute) == value
       end
@@ -39,17 +39,17 @@ module SalesEngine
 
     def clear
       @items = Set.new
-      @caches_by_attribute = Hash.new
+      @index_by_attribute = Hash.new
       @sets_containing_item = Hash.new([])
     end
 
     private
 
-    def cache_for(attribute)
-      @caches_by_attribute[attribute] ||= generate_cache_for_attribute(attribute)
+    def index_for(attribute)
+      @index_by_attribute[attribute] ||= generate_cache_for_attribute(attribute)
     end
 
-    def remove_item_from_cached_sets(item)
+    def remove_item_from_index_sets(item)
       @sets_containing_item[item].each do |set|
         set.delete(item)
       end
@@ -58,9 +58,9 @@ module SalesEngine
     end
 
     def add_item_to_cached_sets(item)
-      cached_attributes.each do |attribute|
+      indexed_attributes.each do |attribute|
         value = item.send(attribute)
-        cache = cache_for(attribute)
+        cache = index_for(attribute)
         set = (cache[value] ||= Set.new)
         set << value
         @sets_containing_item[item] << set
@@ -68,6 +68,10 @@ module SalesEngine
     end
 
     def generate_cache_for_attribute(attribute)
+      if indexed_attributes.include?(attribute)
+        raise "An index already exists for #{attribute}"
+      end
+
       cache = items.group_by(&attribute)
       cache.keys.each do |key|
         set = cache[key] = Set.new(cache[key])
@@ -79,8 +83,8 @@ module SalesEngine
       cache
     end
 
-    def cached_attributes
-      @caches_by_attribute.keys
+    def indexed_attributes
+      @index_by_attribute.keys
     end
   end
 end
