@@ -48,17 +48,22 @@ module SalesEngine
       id.hash
     end
 
-    def set_attribute(attr, value, save_object=true)
-      type = self.class.get_type_of(attr)
+    def get_attribute(attr)
+      instance_variable_get("@#{attr}")
+    end
+
+    def set_attribute(attribute, value, save_object=true)
+      attribute = attribute.to_s
+      type = self.class.get_type_of(attribute)
       casted_value = self.class.type_cast(value, type)
 
       # TODO: This smells.
-      if attr.to_s.end_with?("_id") && value.is_a?(Model)
-        association = attr.gsub(/_id$/, '')
+      if attribute.end_with?("_id") && value.is_a?(Model)
+        association = attribute.gsub(/_id$/, '')
         instance_variable_set("@#{association}", value)
       end
 
-      instance_variable_set("@#{attr}", casted_value)
+      instance_variable_set("@#{attribute}", casted_value)
 
       save if save_object
     end
@@ -77,10 +82,6 @@ module SalesEngine
       set_attribute(:updated_at, now, false)
 
       self.class.object_store.update(self)
-    end
-
-    def get_attribute(attr)
-      instance_variable_get("@#{attr}")
     end
 
     module ModelClassMethods
