@@ -52,7 +52,8 @@ module SalesEngine
       type = self.class.get_type_of(attr)
       casted_value = self.class.type_cast(value, type)
 
-      if attr.to_s.end_with?("_id") && self.class == value.class
+      # TODO: This smells.
+      if attr.to_s.end_with?("_id") && value.is_a?(Model)
         association = attr.gsub(/_id$/, '')
         instance_variable_set("@#{association}", value)
       end
