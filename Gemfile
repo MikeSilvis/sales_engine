@@ -1,7 +1,7 @@
 source :rubygems
 
 group :development do
-  gem 'fabricator'
+  gem 'fabrication'
   gem "faker"
   gem 'rake'
   gem 'rspec'

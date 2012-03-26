@@ -1,6 +1,10 @@
 require 'sales_engine/customer'
 require 'sales_engine/model'
 
+gem 'fabrication'
+require 'fabrication'
+puts Fabricate
+
 describe Customer do
   let(:customers) do
     Customer.all
