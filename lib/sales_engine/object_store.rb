@@ -60,7 +60,6 @@ module SalesEngine
     def add_item_to_cached_sets(item)
       indexed_attributes.each do |attribute|
         value = item.send(attribute)
-        puts "FIZZLE #{attribute} | #{value}"
         index = index_for(attribute)
         set = (index[value] ||= Set.new)
         set << item

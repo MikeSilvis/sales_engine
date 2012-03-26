@@ -17,18 +17,21 @@ describe ObjectStore do
   context "index invalidation" do
     it "query first, then change attribute" do
       store.find_indexed("even", true)
+
       item5 = items.find {|i| i.id == 5}
       item5.even == true
+
       store.find_indexed("even", true).should == items.select(&:even)
+      store.find_indexed("even", false).should == items.reject(&:even)
     end
 
     it "query first, then add item" do
       store.find_indexed("even", true)
+
       item10 = stub("item 10", :id => 10, :even => true)
       store << item10
+
       store.find_indexed("even", true).should == items.select(&:even) + [item10]
     end
-
-    it "query first, remove item"
   end
 end
