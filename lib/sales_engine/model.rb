@@ -203,6 +203,7 @@ module SalesEngine
 
       def random
         index = rand * (all.size - 1)
+        puts all.inspect
         all[index]
       end
 

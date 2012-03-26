@@ -1,7 +1,7 @@
 module SalesEngine
   def self.startup
-    return if @has_loaded
-    @has_loaded = true
+    #return if @has_loaded
+    #@has_loaded = true
 
     files = [
              "./data/customers.csv",
