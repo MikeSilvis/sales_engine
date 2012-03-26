@@ -7,7 +7,7 @@ module TestNamespace
 
     has_many :invoice_items
     has_many :items, :through => :invoice_items
-    field :indexable
+    field :indexable, :string
     attr_accessor :unindexable
   end
 

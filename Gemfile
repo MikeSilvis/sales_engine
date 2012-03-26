@@ -1,6 +1,6 @@
 source :rubygems
 
-roup :development do
+group :development do
   gem 'fabricator'
   gem "faker"
   gem 'rake'
