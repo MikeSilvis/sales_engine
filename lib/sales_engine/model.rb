@@ -182,9 +182,9 @@ module SalesEngine
         when :integer
           obj.to_i
         when :datetime
-          DateTime.parse(obj.to_s)
+          obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s)
         when :decimal
-          BigDecimal(obj)
+          obj.is_a?(BigDecimal) ? obj : BigDecimal(obj)
         else
           raise "Type '#{type}' unsupported."
         end
