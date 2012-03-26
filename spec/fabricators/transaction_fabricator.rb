@@ -1,0 +1,3 @@
+Fabricator(:transaction) do
+
+end

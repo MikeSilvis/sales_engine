@@ -26,7 +26,7 @@ module SalesEngine
     def item_count
       invoice_items.map(&:quantity).sum
     end
-
+    
     def charge(attributes)
       attributes[:invoice_id] = self
       Transaction.create(attributes)
