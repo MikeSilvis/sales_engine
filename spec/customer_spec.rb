@@ -87,4 +87,18 @@ describe Customer do
       customer.favorite_merchant.name.should == "Fritsch-Blanda"
     end
   end
+  context "Extensions of business intelligence" do
+    it "#days_since_activity" do 
+      customer.days_since_activity.should be_kind_of(Integer)
+    end
+    it "#pending_invoices" do 
+      customer.pending_invoices.should_not be_nil
+    end
+    it ".most_items" do
+      Customer.most_items.should_not be_nil
+    end
+    it ".most_revenue" do
+      Customer.most_revenue.should_not be_nil
+    end
+  end
 end

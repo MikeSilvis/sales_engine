@@ -16,9 +16,13 @@ module SalesEngine
     end
 
     def paid?
-      transactions.any?(&:successfully_procesed?)
+      transactions.any?(&:successfull?)
     end
 
+    def pending
+      transactions.any?(&:pending)
+    end
+    
     def total_cost
       invoice_items.sum(&:total_cost)
     end

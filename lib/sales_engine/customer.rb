@@ -23,19 +23,32 @@ module SalesEngine
     end
 
     def days_since_activity
-      raise "Not implemented"
+      last_day = invoices.map(&:transactions).flatten.map(&:created_at).max
+      days = DateTime.now - last_day
+      days.to_i
     end
 
     def pending_invoices
-      raise "Not implemented"
+      invoices.select do |invoice|
+        invoice.transactions.all?(&:unsuccessfull?)
+      end
     end
 
     def self.most_items
-      raise "Not implemented"
+      Customer.all.sort_by(&:items_bought).last
     end
 
     def self.most_revenue
-      raise "Not implemented"
+      Customer.all.sort_by(&:total_cost).last
     end
+
+    def items_bought
+      invoices.sum(&:item_count)
+    end
+
+    def total_cost
+      invoices.sum(&:total_cost)
+    end
+
   end
 end

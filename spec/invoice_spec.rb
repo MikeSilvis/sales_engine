@@ -49,17 +49,21 @@ describe Invoice do
                      :status => "shipped", 
                      :items => [item1, item2, item3], 
                      :transaction => transaction
-                    )
+                     )
     end
     it "creates an invoice" do
       new_invoice
     end
     it "invoice was saved and stored" do 
-      # raise invoices.inspect
-      invoices.include?(new_invoice).should be_true
+      new_invoice
+      Invoice.all.include?(new_invoice).should be_true
     end
-    it "charges a specificinvoice" do 
-      #new_invoice.charge()
+    it "charges a specific invoice" do 
+      trans = invoice.charge(:credit_card_number => "4444333322221111", 
+                             :credit_card_expiration => "10/13", 
+                             :result => "success"
+                            )
+      trans.should_not be_nil
     end
   end
 end
