@@ -8,8 +8,12 @@ module SalesEngine
     field :credit_card_experiation_date, :datetime
     field :result,                       :string
 
-    def successfully_procesed?
+    def successfull?
       result.downcase == "success"
+    end
+
+    def unsuccessfull?
+      result.downcase != "success"
     end
   end
 end

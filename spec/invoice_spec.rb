@@ -9,7 +9,7 @@ describe Invoice do
     Invoice.find_by_id(1)
   end
   let(:customer) do
-    Fabricate(:Customer)
+    Fabricate(:customer)
   end
   let(:merchant) do
     Fabricate(:merchant)
@@ -43,14 +43,27 @@ describe Invoice do
     end
   end
   context "generation" do
+    let(:new_invoice) do
+      Invoice.create(:customer_id => customer, 
+                     :merchant_id => merchant, 
+                     :status => "shipped", 
+                     :items => [item1, item2, item3], 
+                     :transaction => transaction
+                     )
+    end
     it "creates an invoice" do
-      invoice = Invoice.create(:customer_id => customer, 
-                               :merchant_id => merchant, 
-                               :status => "shipped", 
-                               :items => [item1, item2, item3], 
-                               :transaction => transaction
-                              )
-      raise invoice.inspect
+      new_invoice
+    end
+    it "invoice was saved and stored" do 
+      new_invoice
+      Invoice.all.include?(new_invoice).should be_true
+    end
+    it "charges a specific invoice" do 
+      trans = invoice.charge(:credit_card_number => "4444333322221111", 
+                             :credit_card_expiration => "10/13", 
+                             :result => "success"
+                            )
+      trans.should_not be_nil
     end
   end
 end

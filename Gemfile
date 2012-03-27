@@ -1,8 +1,8 @@
 source :rubygems
 
-group :development do
+group :development, :test do
   gem 'fabrication'
-  gem "faker"
+  gem 'faker'
   gem 'rake'
   gem 'rspec'
   gem 'simplecov'

@@ -1,6 +1,7 @@
 require 'bundler'
 Bundler.require
 
+require 'faker'
 require 'simplecov'
 require 'sales_engine/model'
 require 'sales_engine/customer'

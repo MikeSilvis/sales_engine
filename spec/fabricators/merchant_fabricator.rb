@@ -1,3 +1,3 @@
-Fabricator(:fake_merchant) do
+Fabricator(:merchant) do
   name { Faker::Name.name }
 end
