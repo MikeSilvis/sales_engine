@@ -2,28 +2,20 @@ require 'sales_engine/model'
 
 module SalesEngine
   class Item
-    include SalesEngine::Model
+    include Model
 
     has_many :invoice_items
     has_many :invoices, :through => :invoice_items
+    belongs_to :merchant
     field :name,         :string
     field :description,  :string
     field :unit_price,   :decimal
-    field :merchant_id,  :integer
-
-    def invoice_item
-      InvoiceItem.find("item_id", id)
-    end
-
-    def merchant
-      Merchant.find("id", merchant_id)
-    end
 
     def best_day
       InvoiceItem.paid.
         select { |invoice_item| invoice_item.item == self }.
         group_by { |invoice_item| invoice_item.invoice.created_at }.
-        sort_by { |date, invoice_items| -invoice_items.sum(&:total_cost) }.
+        sort_by { |date, invoice_items| -invoice_items.sum(&:quantity) }.
         first
     end
 

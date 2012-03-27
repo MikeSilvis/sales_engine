@@ -5,16 +5,14 @@ require 'sales_engine/merchant'
 
 module SalesEngine
   class Customer
-    include SalesEngine::Model
+    include Model
 
     has_many :invoices
     field :first_name, :string
     field :last_name,  :string
 
     def transactions
-      invoices.map do |i|
-        i.transactions
-      end.flatten
+      invoices.map(&:transactions).flatten
     end
 
     def favorite_merchant
