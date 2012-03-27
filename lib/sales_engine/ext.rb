@@ -1,5 +1,3 @@
-require 'sales_engine/lazy_value'
-
 class String
   def constantize
     split("::").reject(&:empty?).inject(Module) do |mod, str|
@@ -36,14 +34,6 @@ class String
 
   def camelize
     gsub(/[a-z\d]*/, &:capitalize).gsub('_', '')
-  end
-end
-
-class Object
-  def lazy(&block)
-    LazyValue.new do
-      block.call
-    end
   end
 end
 

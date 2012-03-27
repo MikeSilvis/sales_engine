@@ -2,7 +2,7 @@ require 'sales_engine/model'
 
 module SalesEngine
   class InvoiceItem
-    include SalesEngine::Model
+    include Model
 
     belongs_to :item
     belongs_to :invoice

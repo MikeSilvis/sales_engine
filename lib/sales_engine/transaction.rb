@@ -1,7 +1,7 @@
 require 'sales_engine/model'
 module SalesEngine
   class Transaction
-    include SalesEngine::Model
+    include Model
 
     belongs_to :invoice
     field :credit_card_number,           :string
