@@ -27,6 +27,19 @@ module SalesEngine
       invoice_items.sum(&:quantity)
     end
 
+    def self.create(attributes=nil)
+      invoice = super(attributes)
+
+      items = attributes[:items]
+      if items
+        items.each do |item|
+          InvoiceItem.create(:invoice => invoice, :unit_price => item.unit_price, :item => item, :quantity => 0)
+        end
+      end
+
+      invoice
+    end
+
     def self.paid_invoices
       all.select(&:paid?)
     end

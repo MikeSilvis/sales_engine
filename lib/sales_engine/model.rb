@@ -51,6 +51,7 @@ module SalesEngine
       instance_variable_get("@#{attr}")
     end
 
+    # TODO: This super sucks.
     def set_attribute(attribute, value, save_object=true)
       attribute = attribute.to_s
       type = self.class.get_type_of(attribute)
@@ -58,6 +59,9 @@ module SalesEngine
 
       if attribute.end_with?("_id") && value.is_a?(Model)
         set_belongs_to_assoc(attribute, value)
+      elsif value.is_a?(Model)
+        id_field = value.class.table_name.depluralize + "_id"
+        set_attribute(id_field, value.id)
       end
 
       instance_variable_set("@#{attribute}", casted_value)
@@ -202,7 +206,7 @@ module SalesEngine
         when :string   then obj.to_s
         when :integer  then obj.to_i
         when :datetime then obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s)
-        when :decimal  then obj.is_a?(BigDecimal) ? obj : BigDecimal(obj.to_s)
+        when :decimal  then obj.is_a?(BigDecimal) ? obj : BigDecimal(obj.to_s) / 100
         else
           raise "Type '#{type}' unsupported."
         end
