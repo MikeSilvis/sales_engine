@@ -27,8 +27,14 @@ module SalesEngine
       invoice_items.sum(&:quantity)
     end
     
-    def self.average_revenue
-      all.sum(&:total_cost) / all.count
+    def self.average_revenue(date=nil)
+      if date
+        date.to_date
+        select = all.select { |i| i.created_at == date }
+      else
+        select = all
+      end
+      select.sum(&:total_cost) / all.count
     end
 
     def charge(attributes)
@@ -39,6 +45,16 @@ module SalesEngine
      def self.pending
       all.select(&:pending?)
     end
-       
+    
+    def self.average_items(date=nil)
+      if date
+        date.to_date
+        select = all.select { |i| i.created_at == date }
+      else
+        select = all
+      end
+      select.sum(&:item_count) / all.count      
+    end       
+
   end
 end

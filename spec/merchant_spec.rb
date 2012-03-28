@@ -44,9 +44,9 @@ describe Merchant do
     end
   end
   context "Extensions" do 
-    it ".dates_by_revenue" do 
-      merchant.dates_by_revenue.should_not be_nil
-    end
+    # it ".dates_by_revenue" do 
+    #   merchant.dates_by_revenue.should_not be_nil
+    # end
   end
 
 end
