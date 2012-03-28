@@ -130,18 +130,19 @@ module SalesEngine
         end
         define_singleton_method("find_all_by_#{attribute}") do |target_value|
           find(attribute, target_value)
-        end        
+        end
       end
 
       def has_many(association, options={})
+        association = association.to_s
+
         if options[:through]
           class_eval(<<-CODE, __FILE__, __LINE__ + 1)
             def #{association}
-              #{options.fetch(:through)}.map(&:#{association})
+              #{options.fetch(:through)}.map(&:#{association.depluralize})
             end
           CODE
         else
-          association    = association.to_s
           model_constant = [name.deconstantize, association.depluralize.camelize].join("::")
           belongs_to_id  = "#{table_name.depluralize}_id"
 
