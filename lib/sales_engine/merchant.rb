@@ -11,25 +11,28 @@ module SalesEngine
     has_many :invoices
     field :name, :string
 
-    def revenue(date=nil)
-      date = date.to_date if date
-      paid_invoices(date).sum(&:total_cost)
+    def revenue(dates=[])
+      paid_invoices(dates).sum(&:total_cost)
     end
 
     def total_items_sold
       paid_invoices.sum(&:item_count)
     end
 
-    def paid_invoices(date=nil)
-      if date
-        invoices.select(&:paid?).select {|i| i.created_at.to_date == date}
-      else
+    def paid_invoices(dates=[])
+      dates = Array(dates).map(&:to_date)
+
+      if dates.empty?
         invoices.select(&:paid?)
+      else
+        invoices.select(&:paid?).select do |i|
+          dates.include?(i.created_at.to_date)
+        end
       end
     end
 
     def favorite_customer
-      invoices.group_by(&:customer).sort_by{|c,is| -is.size}[0]
+      invoices.group_by(&:customer).sort_by{|c,is| -is.size}.first[0]
     end
 
     def customers_with_pending_invoices
@@ -44,9 +47,8 @@ module SalesEngine
       all.sort_by { |m| -m.total_items_sold }.first(count)
     end
 
-    def self.revenue(date)
-      date = date.to_date if date
-      all.map {|m| m.revenue(date)}.sum
+    def self.revenue(dates=[])
+      all.map {|m| m.revenue(dates)}.sum
     end
 
   end
