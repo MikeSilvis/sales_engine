@@ -16,7 +16,7 @@ module SalesEngine
         select { |invoice_item| invoice_item.item == self }.
         group_by { |invoice_item| invoice_item.invoice.created_at }.
         sort_by { |date, invoice_items| -invoice_items.sum(&:quantity) }.
-        first
+        first[0]
     end
 
     def self.most_revenue(limit)
