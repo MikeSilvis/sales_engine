@@ -15,5 +15,6 @@ module SalesEngine
     def unsuccessfull?
       result.downcase != "success"
     end
+
   end
 end

@@ -29,7 +29,6 @@ describe Merchant do
       date = DateTime.parse("2012-02-14 20:56:56 UTC")
       Merchant.revenue(date)
     end
-
     it "#revenue" do
       merchant.revenue.should_not be_nil
     end
@@ -43,6 +42,11 @@ describe Merchant do
     it "#customers_with_pending_invoices" do
       merchant.customers_with_pending_invoices.should_not be_nil
     end
+  end
+  context "Extensions" do 
+    # it ".dates_by_revenue" do 
+    #   merchant.dates_by_revenue.should_not be_nil
+    # end
   end
 
 end
