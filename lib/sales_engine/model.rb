@@ -1,10 +1,9 @@
-$:.unshift("./")
 require 'bigdecimal'
 require 'date'
 
-require 'sales_engine/object_store'
-require 'sales_engine/ext'
-require 'sales_engine/csv_database'
+require_relative 'object_store'
+require_relative 'ext'
+require_relative 'csv_database'
 
 module SalesEngine
   module Model
