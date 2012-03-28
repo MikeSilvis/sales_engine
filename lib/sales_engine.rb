@@ -17,17 +17,17 @@ module SalesEngine
     load_files
   end
 
-  def klasses
+  def self.klasses
     [Customer, Invoice, Transaction, Merchant, Item, InvoiceItem]
   end
 
-  def load_files
+  def self.load_files
     klasses.each do |klass|
       klass.send("load")
     end
   end
 
-  def files
+  def self.files
     FILES
   end
 
