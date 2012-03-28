@@ -44,9 +44,24 @@ describe Merchant do
     end
   end
   context "Extensions" do 
-    # it ".dates_by_revenue" do 
-    #   merchant.dates_by_revenue.should_not be_nil
-    # end
+    it ".dates_by_revenue" do 
+      Merchant.dates_by_revenue.should_not be_nil
+    end
+     it ".dates_by_revenue(x)" do 
+      Merchant.dates_by_revenue(5).should have(5).DateTime
+    end
+    it ".revenue(range_of_dates)" do
+      date1 = DateTime.parse("2012-02-14 20:56:56 UTC")
+      date2 = DateTime.parse("2012-02-14 20:56:56 UTC")
+
+      Merchant.revenue([date1,date2]).should_not be_nil
+    end
+    it "#revenue(range_of_dates)" do
+      date1 = DateTime.parse("2012-02-14 20:56:56 UTC")
+      date2 = DateTime.parse("2012-02-14 20:56:56 UTC")
+
+      merchant.revenue([date1,date2]).should_not be_nil
+    end    
   end
 
 end
