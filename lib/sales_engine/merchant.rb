@@ -52,7 +52,7 @@ module SalesEngine
     end
 
     def self.dates_by_revenue(limit=nil)
-      dates = paid_invoices.
+      dates = Invoice.paid_invoices.
         group_by { |i| i.created_at.to_date }.
         sort_by { |d, is| -is.sum(&:total_cost) }.
         select { |d, is| d }
