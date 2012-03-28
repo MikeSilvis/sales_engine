@@ -65,5 +65,14 @@ describe Invoice do
                             )
       trans.should_not be_nil
     end
+    context "extensions" do
+      it ".pending" do
+        Invoice.pending.should_not be_nil
+      end
+      it ".average_revenue" do
+        # raise Invoice.average_revenue.to_s
+        Invoice.average_revenue.should_not be_nil
+      end
+    end
   end
 end

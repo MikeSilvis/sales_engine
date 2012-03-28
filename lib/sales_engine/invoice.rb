@@ -19,21 +19,26 @@ module SalesEngine
       transactions.any?(&:successfull?)
     end
 
-    def pending
-      transactions.any?(&:pending)
-    end
-    
     def total_cost
       invoice_items.sum(&:total_cost)
     end
 
     def item_count
-      invoice_items.map(&:quantity).sum
+      invoice_items.sum(&:quantity)
     end
     
+    def self.average_revenue
+      all.sum(&:total_cost) / all.count
+    end
+
     def charge(attributes)
       attributes[:invoice_id] = self
       Transaction.create(attributes)
     end
+
+     def self.pending
+      all.select(&:pending?)
+    end
+       
   end
 end

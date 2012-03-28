@@ -3,11 +3,7 @@ rbglob = File.join(lib, "**/*.rb")
 Dir.glob(rbglob) { |file| require file }
 
 module SalesEngine
-  def self.startup
-    #return if @has_loaded
-    #@has_loaded = true
-
-    files = [
+  FILES = [
              "./data/customers.csv",
              "./data/invoices.csv",
              "./data/transactions.csv",
@@ -16,12 +12,23 @@ module SalesEngine
              "./data/invoice_items.csv"
             ]
 
+  def self.startup
     Model.database = CSVDatabase.new(files)
-    Customer.load
-    Invoice.load
-    Transaction.load
-    Merchant.load
-    Item.load
-    InvoiceItem.load
+    load_files
   end
+
+  def klasses
+    [Customer, Invoice, Transaction, Merchant, Item, InvoiceItem]
+  end
+
+  def load_files
+    klasses.each do |klass|
+      klass.send("load")
+    end
+  end
+
+  def files
+    FILES
+  end
+
 end

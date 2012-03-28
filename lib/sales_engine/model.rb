@@ -56,15 +56,18 @@ module SalesEngine
       type = self.class.get_type_of(attribute)
       casted_value = self.class.type_cast(value, type)
 
-      # TODO: This smells.
       if attribute.end_with?("_id") && value.is_a?(Model)
-        association = attribute.gsub(/_id$/, '')
-        instance_variable_set("@#{association}", value)
+        set_belongs_to_assoc(attribute, value)
       end
 
       instance_variable_set("@#{attribute}", casted_value)
 
       save if save_object
+    end
+
+    def set_belongs_to_assoc(attribute, value)
+      association = attribute.gsub(/_id$/, '')
+      instance_variable_set("@#{association}", value)
     end
 
     def save
@@ -104,13 +107,30 @@ module SalesEngine
         name = name.to_s
         set_type_of(name, type)
 
-        define_method(name) do
-          get_attribute(name)
-        end
+        define_attribute_get(name)
+        define_attribute_set(name)
+        define_finders(name)
+      end
 
-        define_method(name+"=") do |value|
-          set_attribute(name, value)
+      def define_attribute_set(attribute)
+        define_method(attribute+"=") do |value|
+          set_attribute(attribute, value)
         end
+      end
+
+      def define_attribute_get(attribute)
+        define_method(attribute) do
+          get_attribute(attribute)
+        end
+      end
+
+      def define_finders(attribute)
+        define_singleton_method("find_by_#{attribute}") do |target_value|
+          find(attribute, target_value).first
+        end
+        define_singleton_method("find_all_by_#{attribute}") do |target_value|
+          find(attribute, target_value)
+        end        
       end
 
       def has_many(association, options={})
@@ -178,14 +198,10 @@ module SalesEngine
         return obj unless type
 
         case type.to_sym
-        when :string
-          obj.to_s
-        when :integer
-          obj.to_i
-        when :datetime
-          obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s)
-        when :decimal
-          obj.is_a?(BigDecimal) ? obj : BigDecimal(obj.to_s)
+        when :string   then obj.to_s
+        when :integer  then obj.to_i
+        when :datetime then obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s)
+        when :decimal  then obj.is_a?(BigDecimal) ? obj : BigDecimal(obj.to_s)
         else
           raise "Type '#{type}' unsupported."
         end
@@ -213,32 +229,6 @@ module SalesEngine
 
       def table_name
         name.split("::").last.tableize
-      end
-
-      def method_missing(name, *args)
-        name = name.to_s
-        if name.start_with?("find_by_")
-          attribute   = name.gsub(/^find_by_/,"")
-          finder_name = "find_all_by_#{attribute}"
-
-          define_singleton_method(finder_name) do |target_value|
-            find(attribute, target_value).first
-          end
-
-          send(finder_name, args[0])
-
-        elsif name.start_with?("find_all_by_")
-          attribute   = name.gsub(/^find_all_by_/,"")
-          finder_name = "find_all_by_#{attribute}"
-
-          define_singleton_method(finder_name) do |target_value|
-            find(attribute, target_value)
-          end
-
-          send(finder_name, args[0])
-        else
-          super(name.to_sym, *args)
-        end
       end
     end
   end

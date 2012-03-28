@@ -49,6 +49,10 @@ module SalesEngine
       all.map {|m| m.revenue(date)}.sum
     end
 
+    def dates_by_revenue(limit=nil)
+      
+    end
+
   end
 
 end
