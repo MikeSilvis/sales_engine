@@ -14,15 +14,9 @@ describe Invoice do
   let(:merchant) do
     Fabricate(:merchant)
   end
-  let(:item1) do
-    Fabricate(:item)
+  let(:items) do
+    (1..3).map { SalesEngine::Item.random }
   end
-  let(:item2) do
-    Fabricate(:item)
-  end
-  let(:item3) do
-    Fabricate(:item)
-  end  
   let(:transaction) do
     Fabricate(:transaction)
   end
@@ -44,19 +38,20 @@ describe Invoice do
   end
   context "generation" do
     let(:new_invoice) do
-      Invoice.create(:customer_id => customer, 
-                     :merchant_id => merchant, 
+      Invoice.create(:customer => customer, 
+                     :merchant => merchant, 
                      :status => "shipped", 
-                     :items => [item1, item2, item3], 
-                     :transaction => transaction
+                     :items => :items, 
                      )
     end
     it "creates an invoice" do
       new_invoice
     end
     it "invoice was saved and stored" do 
-      new_invoice
-      Invoice.all.include?(new_invoice).should be_true
+      raise new_invoice.items.inspect
+      items.map(&:name).each do |name|
+        new_invoice.items.map(&:name).should include(name)
+      end
     end
     it "charges a specific invoice" do 
       trans = invoice.charge(:credit_card_number => "4444333322221111", 
