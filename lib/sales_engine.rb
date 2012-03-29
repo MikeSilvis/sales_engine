@@ -3,6 +3,7 @@ rbglob = File.join(lib, "**/*.rb")
 Dir.glob(rbglob) { |file| require file }
 
 module SalesEngine
+  EXTENSIONS = %w(customer invoice merchant)
   FILES = [
              "./data/customers.csv",
              "./data/invoices.csv",
