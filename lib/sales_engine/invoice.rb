@@ -16,15 +16,15 @@ module SalesEngine
     end
 
     def paid?
-      transactions.any?(&:successfull?)
+      @paid ||= transactions.any?(&:successfull?)
     end
 
     def total_cost
-      invoice_items.sum(&:total_cost)
+      @total_cost ||= invoice_items.sum(&:total_cost)
     end
 
     def item_count
-      invoice_items.sum(&:quantity)
+      @item_count ||= invoice_items.sum(&:quantity)
     end
 
     def self.create(attributes=nil)
@@ -41,7 +41,7 @@ module SalesEngine
     end
 
     def self.paid_invoices
-      all.select(&:paid?)
+      @paid_invoices ||= all.select(&:paid?)
     end
 
     def self.average_revenue(date=nil)
@@ -51,16 +51,16 @@ module SalesEngine
       else
         select = all
       end
-      select.sum(&:total_cost) / all.count
+      @average_revenue ||= select.sum(&:total_cost) / all.count
     end
 
     def charge(attributes)
       attributes[:invoice_id] = self
-      Transaction.create(attributes)
+      @charge ||= Transaction.create(attributes)
     end
 
      def self.pending
-      all.select(&:pending?)
+      @pending ||= all.select(&:pending?)
     end
 
     def self.average_items(date=nil)
@@ -70,7 +70,7 @@ module SalesEngine
       else
         select = all
       end
-      select.sum(&:item_count) / all.count
+      @average_items ||= select.sum(&:item_count) / all.count
     end
 
   end

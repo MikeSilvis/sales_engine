@@ -24,3 +24,16 @@ task :harness => :gem do
     sh "bundle exec rspec"
   end
 end
+
+task :harness_extensions => :gem do
+  harness_path = File.expand_path("../../sales_engine_spec_harness", __FILE__)
+
+  unless File.exist?(harness_path)
+    sh "git clone https://github.com/JumpstartLab/sales_engine_spec_harness.git '#{harness_path}'"
+  end
+
+  Dir.chdir(harness_path) do
+    sh "git pull"
+    sh "bundle exec rspec:extensions"
+  end
+end

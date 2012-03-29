@@ -10,11 +10,11 @@ module SalesEngine
     field :unit_price,  :decimal
 
     def total_cost
-      unit_price * quantity
+      @total_cost ||= unit_price * quantity
     end
 
     def self.paid
-      all.select {|item| item.invoice.paid?}
+      @paid ||= all.select {|item| item.invoice.paid?}
     end
   end
 end
