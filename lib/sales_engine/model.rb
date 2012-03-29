@@ -25,7 +25,7 @@ module SalesEngine
     def initialize(attributes=nil)
       if attributes
         attributes.each do |attr, value|
-          set_attribute(attr, value, false)
+          send("#{attr}=", value)
         end
       end
     end
@@ -59,9 +59,9 @@ module SalesEngine
 
       if attribute.end_with?("_id") && value.is_a?(Model)
         set_belongs_to_assoc(attribute, value)
-      elsif value.is_a?(Model)
-        id_field = value.class.table_name.depluralize + "_id"
-        set_attribute(id_field, value.id)
+      #elsif value.is_a?(Model)
+        #id_field = value.class.table_name.depluralize + "_id"
+        #set_attribute(id_field, value.id)
       end
 
       instance_variable_set("@#{attribute}", casted_value)
@@ -181,6 +181,10 @@ module SalesEngine
           def #{association}
             #{model_constant}.find_by_id(#{belongs_to_id})
           end
+
+          def #{association}=(model)
+            set_attribute("#{belongs_to_id}", model.id)
+          end
         CODE
       end
 
@@ -207,7 +211,7 @@ module SalesEngine
         when :string   then obj.to_s
         when :integer  then obj.to_i
         when :datetime
-          obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s)
+          obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s) rescue nil
         when :decimal
           obj.is_a?(BigDecimal) ? obj : BigDecimal(obj.to_s) / 100
         else

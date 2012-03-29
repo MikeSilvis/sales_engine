@@ -4,9 +4,9 @@ module SalesEngine
     include Model
 
     belongs_to :invoice
-    field :credit_card_number,           :string
-    field :credit_card_experiation_date, :datetime
-    field :result,                       :string
+    field :credit_card_number,          :string
+    field :credit_card_expiration_date, :datetime
+    field :result,                      :string
 
     def successfull?
       result.downcase == "success"
