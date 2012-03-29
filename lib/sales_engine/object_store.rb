@@ -46,7 +46,8 @@ module SalesEngine
     private
 
     def index_for(attribute)
-      @index_by_attribute[attribute] ||= generate_cache_for_attribute(attribute)
+      @index_by_attribute[attribute] ||=
+        generate_cache_for_attribute(attribute)
     end
 
     def remove_item_from_index_sets(item)

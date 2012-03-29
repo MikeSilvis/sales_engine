@@ -28,9 +28,9 @@ module SalesEngine
     end
 
     def self.create(attributes=nil)
+      items = attributes.delete(:items)
       invoice = super(attributes)
 
-      items = attributes[:items]
       if items
         items.each do |item|
           InvoiceItem.create(:invoice => invoice,
