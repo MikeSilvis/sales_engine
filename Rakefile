@@ -4,6 +4,10 @@ RSpec::Core::RakeTask.new do |t|
   t.pattern = "./spec/**/*_spec.rb"
 end
 
+task :default do 
+  sh "rspec"
+end
+
 task :cane do
   sh "cane --style-glob 'lib/**/*.rb'" rescue nil
 end
