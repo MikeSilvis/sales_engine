@@ -147,7 +147,8 @@ module SalesEngine
             end
           CODE
         else
-          model_constant = [name.deconstantize, association.depluralize.camelize].join("::")
+          model_constant =
+              [name.deconstantize, association.depluralize.camelize].join("::")
           belongs_to_id  = "#{table_name.depluralize}_id"
 
           class_eval(<<-CODE, __FILE__, __LINE__ + 1)
@@ -205,8 +206,10 @@ module SalesEngine
         case type.to_sym
         when :string   then obj.to_s
         when :integer  then obj.to_i
-        when :datetime then obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s)
-        when :decimal  then obj.is_a?(BigDecimal) ? obj : BigDecimal(obj.to_s) / 100
+        when :datetime
+          obj.is_a?(DateTime) ? obj : DateTime.parse(obj.to_s)
+        when :decimal
+          obj.is_a?(BigDecimal) ? obj : BigDecimal(obj.to_s) / 100
         else
           raise "Type '#{type}' unsupported."
         end
