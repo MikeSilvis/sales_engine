@@ -5,8 +5,14 @@ RSpec::Core::RakeTask.new do |t|
 end
 
 task :cane do
-  sh "cane --no-doc --style-glob {spec,lib}/**/*.rb"
+  sh "cane --style-glob 'lib/**/*.rb'" rescue nil
 end
+
+task :reek do
+  sh "reek . 2>&1 | grep '(LongMethod)'" rescue nil
+end
+
+task :style => [:cane, :reek]
 
 task :gem do
   sh "gem build sales_engine.gemspec"
