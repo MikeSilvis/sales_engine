@@ -1,3 +1,6 @@
+require 'bigdecimal'
+require 'bigdecimal/util'
+
 lib    = File.expand_path("../", __FILE__)
 rbglob = File.join(lib, "**/*.rb")
 Dir.glob(rbglob) { |file| require file }

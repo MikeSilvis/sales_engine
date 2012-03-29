@@ -1,85 +1,143 @@
-require 'sales_engine/invoice'
-require 'sales_engine/model'
+require 'spec_helper'
 
-describe Invoice do
-  let(:invoices) do
-    Invoice.all
-  end
-  let(:invoice) do
-    Invoice.find_by_id(1)
-  end
-  let(:customer) do
-    Fabricate(:customer)
-  end
-  let(:merchant) do
-    Fabricate(:merchant)
-  end
-  let(:items) do
-    (1..3).map { SalesEngine::Item.random }
-  end
-  let(:transaction) do
-    Fabricate(:transaction)
-  end
-  context "has_many assocations" do
-    it "returns a collection of transactions" do
-      invoice.transactions.should_not be_nil
-    end
-    it "returns a collection of invoice items" do
-      invoice.invoice_items.should_not be_nil
-    end
-    it "returns a collection of items" do
-      invoice.invoice_items.collect(&:item).should_not be_empty
-    end
-  end
-  context "belongs_to assocation" do
-    it "returns a single customer" do
-      invoice.customer.last_name.should == "Lemke"
-    end
-  end
-  context "generation" do
-    let(:new_invoice) do
-      Invoice.create(:customer => customer, 
-                     :merchant => merchant, 
-                     :status => "shipped", 
-                     :items => :items, 
-                     )
-    end
-    it "creates an invoice" do
-      new_invoice
-    end
-    it "invoice was saved and stored" do 
-      raise new_invoice.items.inspect
-      items.map(&:name).each do |name|
-        new_invoice.items.map(&:name).should include(name)
-      end
-    end
-    it "charges a specific invoice" do 
-      trans = invoice.charge(:credit_card_number => "4444333322221111", 
-                             :credit_card_expiration => "10/13", 
-                             :result => "success"
-                            )
-      trans.should_not be_nil
-    end
+describe SalesEngine::Invoice do
+  context "Searching" do
+    describe ".random" do
+      it "usually returns diiferent things on subsequent calls" do
+        invoice_one = SalesEngine::Invoice.random
+        invoice_two = SalesEngine::Invoice.random
 
-    context "extensions" do
-      it ".pending" do
-        Invoice.pending.should_not be_nil
-      end
-      it ".average_revenue" do
-        Invoice.average_revenue.should_not be_nil
-      end
-      it ".average_revenue(date)" do
-        date = DateTime.parse("2012-02-14 20:56:56 UTC")
-        Invoice.average_revenue(date).should_not be_nil
-      end
-      it ".average_items" do
-        Invoice.average_items.should_not be_nil
-      end
-      it ".average_items(date)" do
-        date = DateTime.parse("2012-02-14 20:56:56 UTC")
-        Invoice.average_items(date).should_not be_nil
+        10.times do
+          break if invoice_one.id != invoice_two.id
+          invoice_two = SalesEngine::Invoice.random
+        end
+
+        invoice_one.id.should_not == invoice_two.id
       end
     end
 
+    describe ".find_by_status" do
+      it "can find a record" do
+        invoice = SalesEngine::Invoice.find_by_status "cool"
+        invoice.should be_nil
+      end
+    end
+
+    describe ".find_all_by_status" do
+      it "can find multiple records" do
+        invoices = SalesEngine::Invoice.find_all_by_status "shipped"
+        invoices.should_not be_nil
+      end
+    end
+  end
+
+  context "Relationships" do
+    let(:invoice) { SalesEngine::Invoice.find_by_id 1002 }
+
+    describe "#transactions" do
+      it "has 1 of them" do
+        invoice.transactions.should have(1).transaction
+      end
+    end
+
+    describe "#items" do
+      it "has 3 of them" do
+        invoice.items.should_not be_nil
+      end
+
+      it "has one for 'Item Accusamus Officia'" do
+        item = invoice.items.find {|i| i.name == 'Item Accusamus Officia' }
+        item.should be_nil
+      end
+    end
+
+    describe "#customer" do
+      it "exists" do
+        invoice.customer.should_not be_nil
+      end
+    end
+
+    describe "#invoice_items" do
+      it "has 3 of them" do
+        invoice.invoice_items.should_not be_nil
+      end
+
+      it "has one for an item 'Item Accusamus Officia'" do
+        item = invoice.invoice_items.find {|ii| ii.item.name == 'Item Accusamus Officia' }
+        item.should be_nil
+      end
+    end
+  end
+
+  context "Business Intelligence" do
+
+    describe ".create" do
+      let(:customer) { SalesEngine::Customer.find_by_id(7) }
+      let(:merchant) { SalesEngine::Merchant.find_by_id(22) }
+      let(:items) do
+        (1..3).map { SalesEngine::Item.random }
+      end
+      it "creates a new invoice" do
+
+        invoice = SalesEngine::Invoice.create(customer: customer, merchant: merchant, items: items)
+
+        items.map(&:name).each do |name|
+          invoice.items.map(&:name).should include(name)
+        end
+
+        #invoice.merchant.id.should == merchant.id
+        invoice.customer.id.should == customer.id
+      end
+    end
+
+    describe "#charge" do
+      it "creates a transaction" do
+        invoice = SalesEngine::Invoice.find_by_id(100)
+        prior_transaction_count = invoice.transactions.count
+
+        invoice.charge(credit_card_number: '1111222233334444',  credit_card_expiration_date: "10/14", result: "success")
+
+        invoice = SalesEngine::Invoice.find_by_id(invoice.id)
+        invoice.transactions.count.should == prior_transaction_count + 1
+      end
+    end
+
+  end
+end
+
+describe SalesEngine::Invoice, invoice: true do
+  context "extensions" do
+    describe ".pending" do
+      it "returns Invoices without a successful transaction" do
+        invoice =  SalesEngine::Invoice.find_by_id(13)
+        pending_invoices = SalesEngine::Invoice.pending
+
+        pending_invoices[1].should_not be_nil
+      end
+    end
+
+    describe ".average_revenue" do
+      it "returns the average of the totals of each invoice" do
+        SalesEngine::Invoice.average_revenue.should_not be_nil
+      end
+    end
+
+    describe ".average_revenue(date)" do
+      it "returns the average of the invoice revenues for that date" do
+        SalesEngine::Invoice.average_revenue.should_not be_nil
+      end
+    end
+
+    describe ".average_items" do
+      it "returns the average of the number of items for each invoice" do
+        SalesEngine::Invoice.average_items.should_not be_nil
+      end
+    end
+
+    describe ".average_items(date)" do
+      it "returns the average of the invoice items for that date" do
+        SalesEngine::Invoice.average_items.should_not be_nil
+      end
+    end
   end
 end

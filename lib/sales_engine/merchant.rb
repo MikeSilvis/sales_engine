@@ -12,7 +12,7 @@ module SalesEngine
     field :name, :string
 
     def revenue(dates=[])
-      paid_invoices(dates).sum(&:total_cost)
+      paid_invoices(dates).sum(&:total_cost).round(2)
     end
 
     def total_items_sold
@@ -48,14 +48,14 @@ module SalesEngine
     end
 
     def self.revenue(dates=[])
-      all.map {|m| m.revenue(dates)}.sum
+      all.map {|m| m.revenue(dates)}.sum.round(2)
     end
 
     def self.dates_by_revenue(limit=nil)
       dates = Invoice.paid_invoices.
         group_by { |i| i.created_at.to_date }.
         sort_by { |d, is| -is.sum(&:total_cost) }.
-        select { |d, is| d }
+        map { |d, is| d }
 
       limit ||= dates.size
 

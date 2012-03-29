@@ -1,4 +1,5 @@
 require 'sales_engine/model'
+
 module SalesEngine
 
   class Invoice
@@ -16,15 +17,15 @@ module SalesEngine
     end
 
     def paid?
-      @paid ||= transactions.any?(&:successfull?)
+      transactions.any?(&:successfull?)
     end
 
     def total_cost
-      @total_cost ||= invoice_items.sum(&:total_cost)
+      invoice_items.sum(&:total_cost)
     end
 
     def item_count
-      @item_count ||= invoice_items.sum(&:quantity)
+      invoice_items.sum(&:quantity)
     end
 
     def self.create(attributes=nil)
@@ -35,7 +36,7 @@ module SalesEngine
         items.each do |item|
           InvoiceItem.create(:invoice => invoice,
                              :unit_price => item.unit_price,
-                             :item => item, :quantity => 0
+                             :item => item, :quantity => 1
                             )
         end
       end
@@ -44,36 +45,36 @@ module SalesEngine
     end
 
     def self.paid_invoices
-      @paid_invoices ||= all.select(&:paid?)
+      all.select(&:paid?)
     end
 
     def self.average_revenue(date=nil)
       if date
-        date.to_date
-        select = all.select { |i| i.created_at == date }
+        date = date.to_date
+        select = paid_invoices.select { |i| i.created_at.to_date == date }
       else
-        select = all
+        select = paid_invoices
       end
-      @average_revenue ||= select.sum(&:total_cost) / all.count
+      (select.sum(&:total_cost) / select.count).round(2)
     end
 
     def charge(attributes)
       attributes[:invoice_id] = self
-      @charge ||= Transaction.create(attributes)
+      Transaction.create(attributes)
     end
 
      def self.pending
-      @pending ||= all.select(&:pending?)
+      all.select(&:pending?)
     end
 
     def self.average_items(date=nil)
       if date
-        date.to_date
-        select = all.select { |i| i.created_at == date }
+        date = date.to_date
+        select = paid_invoices.select { |i| i.created_at.to_date == date }
       else
-        select = all
+        select = paid_invoices
       end
-      @average_items ||= select.sum(&:item_count) / all.count
+      (select.sum(&:item_count) / select.count.to_d).round(2)
     end
 
   end

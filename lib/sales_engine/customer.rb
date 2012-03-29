@@ -21,13 +21,13 @@ module SalesEngine
     end
 
     def days_since_activity
-      last_day = invoices.map(&:transactions).flatten.map(&:created_at).max
-      days = DateTime.now - last_day
+      last_day = invoices.max_by { |i| i.created_at }
+      days = ((DateTime.now - last_day.created_at).to_f + 0.5).round
       @days_since_activity ||= days.to_i
     end
 
     def pending_invoices
-      @pending_invoices ||= invoices.select do |invoice|
+      invoices.select do |invoice|
         invoice.transactions.all?(&:unsuccessfull?)
       end
     end
